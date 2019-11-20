@@ -54,14 +54,25 @@ def ipRede(ipAddr, netMask):
         vet.append(aux)
     print("Ip da rede:", vet)
 
-
 def classeIp(ipAddr):
-    if(ipAddr[0] >= 192 and ipAddr[0] <= 223):
-        print("Classe C")
+    if(ipAddr[0] <= 127):
+        print("Classe A")
     elif(ipAddr[0] >= 128 and ipAddr[0] <= 191):
         print("Classe B")
-    elif(ipAddr[0] <= 127):
-        print("Classe A")
+    elif(ipAddr[0] >= 192 and ipAddr[0] <= 223):
+        print("Classe C")
+
+def reservado(ipAddr):
+    if(ipAddr[0] == 127):
+        print("Endereço de loopback")
+    elif(ipAddr[0] == 10):
+        print("Ip reservado")    
+    elif(ipAddr[0] == 172 and (ipAddr[1] >= 16 or ipAddr[1] <= 31)):
+        print("Ip reservado")
+    elif(ipAddr[0] == 192 and ipAddr[1] == 168):
+        print("Ip reservado")
+    elif(ipAddr[0] == 169 and ipAddr[1] == 254):
+        print("Ip reservado")
 
 if __name__ == "__main__":
     teste1 = lerArquivo()
@@ -73,5 +84,6 @@ if __name__ == "__main__":
     elif(teste4 == 2):
         print("Mascara Inválida")        
     else:    
-        teste5 = classeIp(teste4[0])
-        teste6 = ipRede(teste4[0], teste4[1])
+        teste7 = reservado(teste4[0])
+        #teste5 = classeIp(teste4[0])
+        #teste6 = ipRede(teste4[0], teste4[1])

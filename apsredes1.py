@@ -6,7 +6,9 @@ def lerArquivo():
         dados_json = json.load(arquivo_json)
         ipAddr = dados_json['ipAddr']
         netMask = dados_json['netMask']
-        return ipAddr, netMask
+        vetSplit =  split(ipAddr, netMask)
+        vetCast = cast(vetSplit[0], vetSplit[1])
+        return vetCast[0], vetCast[1]
     except Exception as erro:
         print("Ocorreu um erro ao carregar o arquivo")
         print("Erro: {}". format(erro))
@@ -37,9 +39,22 @@ def converteBinario(Ip):
             if n == 0:
                 break
         binario = binario[::-1]
-        #binario = int(binario)
         ipBinario.append(binario)
     return ipBinario
+
+def converteDecimal(Ip):
+    ipDecimal = []
+    for i in range(4):
+        n = Ip[i]
+        decimal = 0
+        n = n[::-1]
+        tam = len(n)
+        for i in range(tam):
+            if n[i] == "1":
+                decimal = decimal + 2**i
+        ipDecimal.append(decimal)
+    return ipDecimal
+
 
 def preencherVetor(Ip):
     contador = []
@@ -58,26 +73,24 @@ def preencherVetor(Ip):
 def validar(ipAddr, netMask):
     aux = 0
     for i in range(4):
-        if(ipAddr[i] < 0 or ipAddr[i] > 255):
+        if(ipAddr[i] > 255):
             aux = 1
             return 1
             break
-        elif(netMask[i] < 0 or netMask[i] > 255):
+        elif(netMask[i] > 255):
             aux = 1
             return 2
             break
-    if (aux == 0):
-        #print("IP e Mascara Válida")
-        #print(ipAddr, netMask)
-        return ipAddr, netMask
-
-
+    
+    netMaskBinario = preencherVetor(netMask)
+    flag = 0
     for i in range(4):
         for j in range(8):
-            if(netMaskBinario[i][j] == 0):
+            if(netMaskBinario[i][j] == "0"):
                 flag = 1
-            elif(netMaskBinario[i][j] == 1 and flag == 1):
-                print("mascara invalida")   
+            elif(netMaskBinario[i][j] == "1" and flag == 1):
+                print("Mascara invalida")
+                break   
 
 
 def netID_hostID(netMask):
@@ -94,18 +107,18 @@ def netID_hostID(netMask):
     print("Quantidade de bits da host:", contador0)
     hosts = int(contador0)
     hosts = ((2 ** hosts)-2)
-    print("Quantidade de hosts na rede", hosts)
+    print("Quantidade de hosts na rede:", hosts)
 
 def ipRede(ipAddr, netMask):
     ipRede = []
     for i in range(4):
         aux = ipAddr[i] & netMask[i]
         ipRede.append(aux)
-    print("Ip da rede:", ipRede)
     return ipRede
 
 def ipBroadcast(ipAddr, netMask):
     ipRedeVetor = ipRede(ipAddr, netMask)
+    print("Ip da rede:", ipRedeVetor)
     ipRedeBinario = preencherVetor(ipRedeVetor)
     ipBroadcastBinario = preencherVetor(netMask)
     contador0 = 0
@@ -158,8 +171,10 @@ def ipBroadcast(ipAddr, netMask):
                 break
         if(aux == 0):
             break
+    broadcast = converteDecimal(ipBroadcastBinarioCopia)      
+    print("Ip de Broadcast: ", broadcast)
+    return broadcast
 
-    print(ipBroadcastBinarioCopia)
 
 
 
@@ -184,19 +199,11 @@ def reservado(ipAddr):
         print("Ip reservado")
 
 if __name__ == "__main__":
-    teste1 = lerArquivo()
-    teste2 = split(teste1[0], teste1[1])
-    teste3 = cast(teste2[0], teste2[1])
-    #alo = verificar(teste3[0], teste3[1])
-    asd = ipBroadcast(teste3[0], teste3[1])
-    #teste4 = netID_hostID(teste3[1])
-    #oi = ipRede(teste3[0], teste3[1])
-    #teste4 = verificar(teste3[0], teste3[1])
-    #if(teste4 == 1):
-    #    print("IP Inválido")
-    #elif(teste4 == 2):
-    #    print("Mascara Inválida")        
-    #else:    
-    #    teste7 = reservado(teste4[0])
-    #    teste5 = classeIp(teste4[0])
-    #    teste6 = ipRede(teste4[0], teste4[1])
+    ler = lerArquivo()
+    valida = validar(ler[0], ler[1])
+    qtde = netID_hostID(ler[1])
+    classe = classeIp(ler[0])
+    rede = ipRede(ler[0], ler[1])
+    broadcast = ipBroadcast(rede, ler[1])
+    reserv = reservado(ler[0])
+

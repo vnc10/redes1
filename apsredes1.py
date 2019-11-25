@@ -108,6 +108,7 @@ def netID_hostID(netMask):
     hosts = int(contador0)
     hosts = ((2 ** hosts)-2)
     print("Quantidade de hosts na rede:", hosts)
+    return contador1, contador0, hosts
 
 def ipRede(ipAddr, netMask):
     ipRede = []
@@ -175,35 +176,82 @@ def ipBroadcast(ipAddr, netMask):
     print("Ip de Broadcast: ", broadcast)
     return broadcast
 
+def intervalo(ipRede, ipBroadcast):
+    ipIntervalo1 = ipRede
+    ipIntervalo2 = ipBroadcast
+    ipIntervalo1[3] = ipIntervalo1[3] + 1
+    ipIntervalo2[3] = ipIntervalo2[3] - 1
+    
+    print("Faixa de máquinas validas:", ipIntervalo1, ipIntervalo2)
+    return ipIntervalo1, ipIntervalo2
 
 
 
 def classeIp(ipAddr):
     if(ipAddr[0] <= 127):
         print("Classe A")
+        string = "Classe A"
+        return string
     elif(ipAddr[0] >= 128 and ipAddr[0] <= 191):
         print("Classe B")
+        string = "Classe B"
+        return string
     elif(ipAddr[0] >= 192 and ipAddr[0] <= 223):
         print("Classe C")
+        string = "Classe C"
+        return string
+    elif(ipAddr[0] >= 224 and ipAddr[0] <= 239):
+        print("Classe D")
+        string = "Classe D"
+        return string
+    elif(ipAddr[0] >= 240 and ipAddr[0] <= 255):
+        print("Classe E")
+        string = "Classe E"
+        return string
 
 def reservado(ipAddr):
     if(ipAddr[0] == 127):
         print("Endereço de loopback")
+        string = "Endereço de loopback"
+        return string  
     elif(ipAddr[0] == 10):
-        print("Ip reservado")    
+        print("Ip reservado")
+        string = "Ip reservado"
+        return string    
     elif(ipAddr[0] == 172 and (ipAddr[1] >= 16 or ipAddr[1] <= 31)):
         print("Ip reservado")
+        string = "Ip reservado"
+        return string  
     elif(ipAddr[0] == 192 and ipAddr[1] == 168):
         print("Ip reservado")
+        string = "Ip reservado"
+        return string  
     elif(ipAddr[0] == 169 and ipAddr[1] == 254):
         print("Ip reservado")
+        string = "Ip reservado"
+        return string  
 
-if __name__ == "__main__":
+def salvarJSON():
     ler = lerArquivo()
     valida = validar(ler[0], ler[1])
     qtde = netID_hostID(ler[1])
     classe = classeIp(ler[0])
     rede = ipRede(ler[0], ler[1])
     broadcast = ipBroadcast(rede, ler[1])
+    interv = intervalo(rede, broadcast)
     reserv = reservado(ler[0])
+    arquivo = open("resultado.json", "w")
+    arquivo.write("Quantidade de bits da rede: " + str(qtde[0]))
+    arquivo.write("\nQuantidade de bits da host: " + str(qtde[1]))
+    arquivo.write("\nQuantidade de hosts na rede: " + str(qtde[2]))
+    arquivo.write("\n" + classe)
+    arquivo.write("\nIP da Rede: " + str(rede[0])+"."+str(rede[1])+"."+str(rede[2])+"."+str(rede[3]))
+    arquivo.write("\nIP do Broadcast: " + str(broadcast[0])+"."+str(broadcast[1])+"."+str(broadcast[2])+"."+str(broadcast[3]))
+    arquivo.write("\nFaixa de máquinas validas: " + str(interv[0][0])+"."+ str(interv[0][1])+"."+ str(interv[0][2])+"."+ str(interv[0][3])+ " entre " + str(interv[1][0])+"."+ str(interv[1][1])+"."+ str(interv[1][2])+"."+ str(interv[1][3]))
+    arquivo.write("\n" + reserv)
+    arquivo.close()
+
+
+if __name__ == "__main__":
+    executar = salvarJSON()
 

@@ -1,8 +1,1 @@
-Quantidade de bits da rede: 18
-Quantidade de bits da host: 14
-Quantidade de hosts na rede: 16382
-Classe C
-IP da Rede: 192.168.0.1
-IP do Broadcast: 192.168.63.254
-Faixa de máquinas validas: 192.168.0.1 entre 192.168.63.254
-Ip reservado
+{"Tipo_IP:": "Ip reservado", "Hosts_na_Rede": 32766, "Bits_Rede": 17, "Ip_Broadcast": "10.2.127.254", "Bits_Hosts": 15, "Classe:": "A", "Faixa_Maquina_Validas_Inicial": "10.2.0.1", "Faixa_Maquina_Validas_Final": "10.2.127.254", "Ip_Rede": "10.2.0.1"}

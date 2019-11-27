@@ -71,16 +71,11 @@ def preencherVetor(Ip):
     return ipBinario
 
 def validar(ipAddr, netMask):
-    aux = 0
     for i in range(4):
         if(ipAddr[i] > 255):
-            aux = 1
             return 1
-            break
         elif(netMask[i] > 255):
-            aux = 1
             return 2
-            break
     
     netMaskBinario = preencherVetor(netMask)
     flag = 0
@@ -89,8 +84,7 @@ def validar(ipAddr, netMask):
             if(netMaskBinario[i][j] == "0"):
                 flag = 1
             elif(netMaskBinario[i][j] == "1" and flag == 1):
-                print("Mascara invalida")
-                break   
+                return 2   
 
 
 def netID_hostID(netMask):
@@ -186,70 +180,71 @@ def intervalo(ipRede, ipBroadcast):
     return ipIntervalo1, ipIntervalo2
 
 
-
 def classeIp(ipAddr):
     if(ipAddr[0] <= 127):
         print("Classe A")
-        string = "Classe A"
-        return string
+        string = "A"
     elif(ipAddr[0] >= 128 and ipAddr[0] <= 191):
         print("Classe B")
-        string = "Classe B"
-        return string
+        string = "B"
     elif(ipAddr[0] >= 192 and ipAddr[0] <= 223):
         print("Classe C")
-        string = "Classe C"
-        return string
+        string = "C"
     elif(ipAddr[0] >= 224 and ipAddr[0] <= 239):
         print("Classe D")
-        string = "Classe D"
-        return string
+        string = "D"
     elif(ipAddr[0] >= 240 and ipAddr[0] <= 255):
         print("Classe E")
-        string = "Classe E"
-        return string
+        string = "E"
+    return string
 
 def reservado(ipAddr):
     if(ipAddr[0] == 127):
         print("Endereço de loopback")
-        string = "Endereço de loopback"
-        return string  
+        string = "Endereço de loopback" 
     elif(ipAddr[0] == 10):
         print("Ip reservado")
-        string = "Ip reservado"
-        return string    
+        string = "Ip reservado"    
     elif(ipAddr[0] == 172 and (ipAddr[1] >= 16 or ipAddr[1] <= 31)):
         print("Ip reservado")
-        string = "Ip reservado"
-        return string  
+        string = "Ip reservado"  
     elif(ipAddr[0] == 192 and ipAddr[1] == 168):
         print("Ip reservado")
-        string = "Ip reservado"
-        return string  
+        string = "Ip reservado" 
     elif(ipAddr[0] == 169 and ipAddr[1] == 254):
         print("Ip reservado")
         string = "Ip reservado"
-        return string  
+    else:
+        string = "Ip não reservado"
+    return string  
 
 def salvarJSON():
     ler = lerArquivo()
     valida = validar(ler[0], ler[1])
-    qtde = netID_hostID(ler[1])
-    classe = classeIp(ler[0])
-    rede = ipRede(ler[0], ler[1])
-    broadcast = ipBroadcast(rede, ler[1])
-    interv = intervalo(rede, broadcast)
-    reserv = reservado(ler[0])
-    arquivo = open("resultado.json", "w")
-    arquivo.write("Quantidade de bits da rede: " + str(qtde[0]))
-    arquivo.write("\nQuantidade de bits da host: " + str(qtde[1]))
-    arquivo.write("\nQuantidade de hosts na rede: " + str(qtde[2]))
-    arquivo.write("\n" + classe)
-    arquivo.write("\nIP da Rede: " + str(rede[0])+"."+str(rede[1])+"."+str(rede[2])+"."+str(rede[3]))
-    arquivo.write("\nIP do Broadcast: " + str(broadcast[0])+"."+str(broadcast[1])+"."+str(broadcast[2])+"."+str(broadcast[3]))
-    arquivo.write("\nFaixa de máquinas validas: " + str(interv[0][0])+"."+ str(interv[0][1])+"."+ str(interv[0][2])+"."+ str(interv[0][3])+ " entre " + str(interv[1][0])+"."+ str(interv[1][1])+"."+ str(interv[1][2])+"."+ str(interv[1][3]))
-    arquivo.write("\n" + reserv)
-    arquivo.close()
+    if(valida == 1):
+        print("Ip inválido")
+    elif(valida == 2):
+        print("Mascara inválida")
+    else:  
+        qtde = netID_hostID(ler[1])
+        classe = classeIp(ler[0])
+        rede = ipRede(ler[0], ler[1])
+        broadcast = ipBroadcast(rede, ler[1])
+        interv = intervalo(rede, broadcast)
+        reserv = reservado(ler[0])
+        dicionario = {
+            'Bits_Rede': qtde[0],
+            'Bits_Hosts': qtde[1],
+            'Hosts_na_Rede': qtde[2],
+            'Classe:': classe,
+            'Ip_Rede': str(rede[0])+"."+str(rede[1])+"."+str(rede[2])+"."+str(rede[3]),
+            'Ip_Broadcast': str(broadcast[0])+"."+str(broadcast[1])+"."+str(broadcast[2])+"."+str(broadcast[3]),
+            'Faixa_Maquina_Validas_Inicial': str(interv[0][0])+"."+ str(interv[0][1])+"."+ str(interv[0][2])+"."+ str(interv[0][3]),
+            'Faixa_Maquina_Validas_Final': str(interv[1][0])+"."+ str(interv[1][1])+"."+ str(interv[1][2])+"."+ str(interv[1][3]),
+            'Tipo_IP:': reserv 
+        }
+        with open('resultado.json', 'w') as f:
+            json.dump(dicionario, f)
 
 
 if __name__ == "__main__":

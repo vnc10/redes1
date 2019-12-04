@@ -1,24 +1,36 @@
 import json
 
-def lerArquivo():
-    try:
-        arquivo_json = open('teste.json', 'r')
-        dados_json = json.load(arquivo_json)
-        ipAddr = dados_json['ipAddr']
-        netMask = dados_json['netMask']
-        vetSplit =  split(ipAddr, netMask)
-        vetCast = cast(vetSplit[0], vetSplit[1])
-        return vetCast[0], vetCast[1]
+def lerArquivo(): 
+    try: 
+        # recebe a entrada json
+        arquivo_json = open('teste.json', 'r') 
+        # converte para json
+        dados_json = json.load(arquivo_json) 
+        # salva ipAddr
+        ipAddr = dados_json['ipAddr'] 
+        # salva netMask
+        netMask = dados_json['netMask']  
+        print('IP de entrada:', ipAddr) 
+        print('Máscara aplicada:', netMask)
+        # une ipAddr e netMask
+        vetSplit =  split(ipAddr, netMask) 
+        # une e faz cast 
+        vetCast = cast(vetSplit[0], vetSplit[1]) 
+        return vetCast[0], vetCast[1] 
+    # se houver erro    
     except Exception as erro:
-        print("Ocorreu um erro ao carregar o arquivo")
+        print("Ocorreu um erro ao carregar o arquivo") 
+        # mostra o erro 
         print("Erro: {}". format(erro))
 
-def split(ipAddr, netMask):
+def split(ipAddr, netMask): 
+    # tira os pontos e adiciona em um vetor
     vetorIpAddr = ipAddr.split(".")
     vetorNetMask = netMask.split(".")
     return vetorIpAddr, vetorNetMask
     
-def cast(ipAddr, netMask):   
+def cast(ipAddr, netMask): 
+    # tira os pontos e adiciona em um vetor com cast dos elementos   
     vetorIpAddr = []
     for i in ipAddr:
         vetorIpAddr.append(int(i))
@@ -27,7 +39,7 @@ def cast(ipAddr, netMask):
         vetorNetMask.append(int(i))
     return vetorIpAddr, vetorNetMask
 
-
+# funcao para conversao de um ip em binario
 def converteBinario(Ip):
     ipBinario = []
     for i in range(4):
@@ -40,8 +52,9 @@ def converteBinario(Ip):
                 break
         binario = binario[::-1]
         ipBinario.append(binario)
-    return ipBinario
+    return ipBinario 
 
+# conversao de IP para decimal
 def converteDecimal(Ip):
     ipDecimal = []
     for i in range(4):
@@ -69,7 +82,8 @@ def preencherVetor(Ip):
                 ipBinario[i] = str("0") + ipBinario[i]
 
     return ipBinario
-
+ 
+# realiza as validações 
 def validar(ipAddr, netMask):
     for i in range(4):
         if(ipAddr[i] > 255):
@@ -225,7 +239,8 @@ def salvarJSON():
         print("Ip inválido")
     elif(valida == 2):
         print("Mascara inválida")
-    else:  
+    else:   
+
         qtde = netID_hostID(ler[1])
         classe = classeIp(ler[0])
         rede = ipRede(ler[0], ler[1])
